@@ -1,0 +1,41 @@
+
+.radix-themes {
+  background: url(@images/background.svg) no-repeat center;
+  background-size: cover;
+  height: 100vh;
+  color: #000000;
+}
+
+.rt-BaseDialogContent {
+  /*background: var(--gray-a8);*/
+  background: #ffffff;
+  color: #000000;
+}
+
+.login-container {
+  display: flex !important;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
+  width: 100%;
+  margin: auto;
+}
+
+.login-form {
+  width: 450px;
+  background-color: white;
+  /*color: black;*/
+}
+
+.game-icon{
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  /*margin:50px auto;*/
+}
+
+.game{
+  width:560px;
+  margin:50px auto;
+}
