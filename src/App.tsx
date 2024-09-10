@@ -13,6 +13,8 @@ import UploadFile from "@/components/explorer/uploadFile.tsx";
 
 export default function App() {
     const account = useCurrentAccount();
+    // console.log('app address', account?.address)
+
     const address = account?.address;
     const [isSignin, setIsSignIn] = useState(false);
     const [fileList, setFileList] = useState<FileOnStore[]>([]);
@@ -53,72 +55,25 @@ export default function App() {
         }
     }, [account]);
 
-    if (!isSignin) {
-        return (
-            <>
-                <Box className="login-container">
-                    <Flex direction="column" gap="3">
-                        <Card className="login-form">
-                            <Flex direction="column" gap="3">
-                                <Text as="div" weight="bold" size="3" mb="1" align={'center'}>
-                                    Walrus Share
-                                </Text>
-                                <Text>
-                                    Walrus Share is a file sharing app based on the Walrus protocol. Walrus Share app
-                                    can not only
-                                    provide Walrus-based distributed storage, but also verify the sharing permissions of
-                                    files. This ensures that the original file owner can gain benefits from file
-                                    sharing.
-                                </Text>
-
-                                <Text size="1" mb="1" align={'center'}>
-                                    Version (20240904.test)
-                                </Text>
-                            </Flex>
-                        </Card>
-                        {account ?
-                            <Grid columns="1" gap="2">
-                                <Button onClick={() => {
-                                    setIsSignIn(true)
-                                }}>Let's Share</Button>
-                            </Grid>
-                            : <ConnectButton/>}
-                    </Flex>
-                </Box>
-            </>
-        )
-
-    }
 
     return (
         <>
-            <Grid columns="1" p="4">
-                <Heading align="center">Walrus Share</Heading>
+            <Flex direction="column" gap="3">
                 <Box>
-                    <Grid columns="2" align="center">
-                        <Box>
-                            <UploadFile
-                                root={root}
-                                reFetchDir={fetchData}
-                            />
-                        </Box>
-                        <Flex justify="end" p="4">
-                            <ConnectButton/>
-                        </Flex>
-                    </Grid>
-                </Box>
-                <Flex direction="column" gap="3">
-                    <Flex>
-                    </Flex>
-                    <Explorer
-                        folders={folderList}
-                        files={fileList}
-                        removeFolder={removeFolder}
-                        removeFile={removeFile}
+                    <UploadFile
+                        root={root}
+                        reFetchDir={fetchData}
                     />
+                </Box>
+                <Flex>
                 </Flex>
-
-            </Grid>
+                <Explorer
+                    folders={folderList}
+                    files={fileList}
+                    removeFolder={removeFolder}
+                    removeFile={removeFile}
+                />
+            </Flex>
         </>
     )
 }
