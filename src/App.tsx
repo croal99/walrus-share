@@ -10,16 +10,30 @@ import {getChildFiles, getFilesByType, removeFileStore} from "@/hooks/useFileSto
 import Explorer from "@/components/explorer/explorer.tsx";
 import {getCurrentFolder} from "@/hooks/useFolderStore.ts";
 import UploadFile from "@/components/explorer/uploadFile.tsx";
+import {useWalrusShare} from "@/hooks/useWalrusShare.ts";
 
 export default function App() {
     const account = useCurrentAccount();
     // console.log('app address', account?.address)
 
-    const address = account?.address;
     const [isSignin, setIsSignIn] = useState(false);
     const [fileList, setFileList] = useState<FileOnStore[]>([]);
     const [folderList, setFolderList] = useState<FolderOnStore[]>([]);
     const [root, setRoot] = useState<FolderOnStore>();
+
+    const {handleCreateManager} = useWalrusShare();
+
+    const debug = () => {
+        handleCreateManager(handleSuccess, handleError)
+    }
+
+    const handleSuccess = (result) => {
+        console.log('success', result)
+    }
+
+    const handleError = (result) => {
+        console.log('error', result)
+    }
 
     const removeFolder = async (folderInfo: FolderOnStore) => {
     }
@@ -55,17 +69,15 @@ export default function App() {
         }
     }, [account]);
 
-
     return (
         <>
             <Flex direction="column" gap="3">
-                <Box>
+                <Flex gap="3">
                     <UploadFile
                         root={root}
                         reFetchDir={fetchData}
                     />
-                </Box>
-                <Flex>
+                    <Button onClick={debug}>Debug</Button>
                 </Flex>
                 <Explorer
                     folders={folderList}

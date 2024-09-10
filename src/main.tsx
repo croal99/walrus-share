@@ -14,6 +14,7 @@ import App from "@/App.tsx";
 // Config options for the networks you want to connect to
 const {networkConfig} = createNetworkConfig({
     localnet: {url: getFullnodeUrl('localnet')},
+    testnet: {url: getFullnodeUrl('testnet')},
     mainnet: {url: getFullnodeUrl('mainnet')},
 });
 const queryClient = new QueryClient();
@@ -52,7 +53,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         radius="full"
     >
         <QueryClientProvider client={queryClient}>
-            <SuiClientProvider networks={networkConfig} defaultNetwork="localnet">
+            <SuiClientProvider networks={networkConfig} defaultNetwork="testnet">
                 <WalletProvider>
                     <RouterProvider router={router} />
                 </WalletProvider>
