@@ -19,7 +19,7 @@ module store::manage {
     const EIncorrectAmount: u64 = 0;
 
     /// manage fee (1 Sui)
-    const CREATE_MANAGER_PRICE: u64 = 1_000_000_000;
+    const CREATE_MANAGER_PRICE: u64 = 1_000_000;
 
     public struct Playground has key, store {
         id: UID,
