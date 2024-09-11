@@ -1,6 +1,7 @@
 export interface FileOnStore {
     id: string;
     name: string;
+    objectId: string;
     blobId: string;
     mediaType: string;
     icon: string;

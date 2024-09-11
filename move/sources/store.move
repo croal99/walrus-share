@@ -11,6 +11,7 @@ module store::filestore {
         id: UID,
         filename: String,
         media: String,
+        blobId: String,
         salt: String,
     }
 
@@ -18,12 +19,14 @@ module store::filestore {
         filename: vector<u8>,
         media: vector<u8>,
         salt: vector<u8>,
+        blobId: vector<u8>,
         ctx: &mut TxContext
     ): ShareFile {
         let file = ShareFile {
             id: sui::object::new(ctx),
             filename: string::utf8(filename),
             media: string::utf8(media),
+            blobId: string::utf8(blobId),
             salt: string::utf8(salt),
         };
 

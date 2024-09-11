@@ -16,16 +16,11 @@ export default function App() {
     const account = useCurrentAccount();
     // console.log('app address', account?.address)
 
-    const [isSignin, setIsSignIn] = useState(false);
+    const [isSignIn, setIsSignIn] = useState(false);
+    const [uploadStep, setUploadStep] = useState(0);
     const [fileList, setFileList] = useState<FileOnStore[]>([]);
     const [folderList, setFolderList] = useState<FolderOnStore[]>([]);
     const [root, setRoot] = useState<FolderOnStore>();
-
-    const {handleCreateManager} = useWalrusShare();
-
-    const debug = () => {
-        handleCreateManager(handleSuccess, handleError)
-    }
 
     const handleSuccess = (result) => {
         console.log('success', result)
@@ -76,14 +71,15 @@ export default function App() {
                     <UploadFile
                         root={root}
                         reFetchDir={fetchData}
+                        uploadStep={uploadStep}
                     />
-                    <Button onClick={debug}>Debug</Button>
                 </Flex>
                 <Explorer
                     folders={folderList}
                     files={fileList}
                     removeFolder={removeFolder}
                     removeFile={removeFile}
+                    setUploadStep={setUploadStep}
                 />
             </Flex>
         </>

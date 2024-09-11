@@ -44,6 +44,18 @@ export async function getChildFiles(parentId) {
     return [];
 }
 
+export async function getFileByID(id) {
+    const files = await getAllFiles();
+
+    for (let i = 0; i < files.length; i++) {
+        if (files[i].id === id ) {
+            return files[i];
+        }
+    }
+
+    return false;
+}
+
 export async function getFilesByType(mediaType) {
     const files: FileOnStore[] | null = await localforage.getItem(KEY_FILE);
     if (!files) {
@@ -76,7 +88,7 @@ export async function checkFileIsExist(newFile: FileOnStore) {
     const folders = await getChildFiles(newFile.parentId);
 
     // 检查是否已经创建
-    return matchSorter(folders, newFile.name, {keys: ["name"]}).length > 0
+    return matchSorter(folders, newFile.objectId, {keys: ["objectId"]}).length > 0
 }
 
 export async function createFile(newFile: FileOnStore) {

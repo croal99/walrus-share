@@ -1,6 +1,6 @@
 import {Blockquote, Box, Button, Card, Dialog, Flex, Progress, Spinner, Strong, Text} from "@radix-ui/themes";
 import {Form} from "react-router-dom";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {getSetting} from "@/hooks/useLocalStore.ts";
 import {BlobOnWalrus, NewBlobOnWalrus} from "@/types/BlobOnWalrus.ts";
 import {FileOnStore} from "@/types/FileOnStore.ts";
@@ -14,6 +14,7 @@ export default function UploadFile(
     {
         root,
         reFetchDir,
+        uploadStep,
     }) {
     const [file, setFile] = useState();
     const [step, setStep] = useState(0);
@@ -39,7 +40,6 @@ export default function UploadFile(
 
         setUploadProgress(0);
         setIsWarning(setting.publisher === "https://publisher-devnet.walrus.space");
-        setStep(2);
 
         const blob = await readfile(file).catch(function (err) {
             console.error(err);
@@ -94,6 +94,8 @@ export default function UploadFile(
         resultbytes.set(pbkdf2salt, 8);
         resultbytes.set(cipherbytes, 16);
 
+        // 准备上传
+        setStep(2);
         const publisherUrl = `${setting.publisher}/v1/store?epochs=1`;
         const config = {
             headers: {
@@ -104,8 +106,6 @@ export default function UploadFile(
                 setUploadProgress(percentCompleted);
             }
         };
-
-        // axios.put(publisherUrl, plaintextbytes, config).then(response => {
         axios.put(publisherUrl, resultbytes, config).then(response => {
             console.log('store', response)
             setUploadProgress(0);
@@ -129,6 +129,7 @@ export default function UploadFile(
                 id: "",
                 name: file.name,
                 parentId: root.id,
+                objectId: "",
                 blobId: blobId,
                 mediaType: file.type,
                 icon: "",
@@ -154,52 +155,46 @@ export default function UploadFile(
 
     }
 
+    useEffect(() => {
+        setStep(uploadStep)
+
+        return () => {
+        }
+    }, [uploadStep]);
+
     return (
         <>
-            <Dialog.Root>
-                <Dialog.Trigger>
-                    <Button onClick={
-                        async () => {
-                        }
-                    }>Share File</Button>
-                </Dialog.Trigger>
+            <Button onClick={() => {
+                setStep(1)
+            }}>Upload File</Button>
 
-                <Dialog.Content maxWidth="650px">
+            <Dialog.Root open={step == 1}>
+                <Dialog.Content maxWidth="550px">
                     <Dialog.Title>Step 1: ENCRYPT file</Dialog.Title>
                     <Dialog.Description size="2" mb="4">
                     </Dialog.Description>
 
-                        <Flex direction="column" gap="3">
-                            <Text>
-                                Walrus Share uses javascript running within your web browser to encrypt and decrypt
-                                files client-side, in-browser. This App makes no network connections during
-                                this
-                                process, to ensure that your keys never leave the web browser during
-                                the
-                                process.
-                            </Text>
-                            <Text>
-                                All client-side cryptography is implemented using the Web Crypto API. Files
-                                are encrypted using AES-CBC 256-bit symmetric encryption. The encryption key is
-                                derived from the password and a random salt using PBKDF2 derivation with 10000
-                                iterations of SHA256 hashing.
+                    <Flex direction="column" gap="3">
+                        <Text>
+                            Walrus Share uses javascript running within your web browser to encrypt and decrypt
+                            files client-side, in-browser. This App makes no network connections during
+                            this
+                            process, to ensure that your keys never leave the web browser during
+                            the
+                            process.
+                        </Text>
+                        <Text>
+                            All client-side cryptography is implemented using the Web Crypto API. Files
+                            are encrypted using AES-CBC 256-bit symmetric encryption. The encryption key is
+                            derived from the password and a random salt using PBKDF2 derivation with 10000
+                            iterations of SHA256 hashing.
 
-                            </Text>
-                            <input type="file" onChange={(e) => {
-                                setFile(e.target.files[0])
-                            }}/>
-                        </Flex>
-
-                        <Flex gap="3" mt="4" justify="end">
-                            <Dialog.Close>
-                                <Button>
-                                    Close
-                                </Button>
-                            </Dialog.Close>
-                            <Dialog.Close>
-                                <Button onClick={handleSubmit}>ENCRYPT</Button>
-                            </Dialog.Close>
-                        </Flex>
+                        </Text>
+                        <input type="file" onChange={(e) => {
+                            setFile(e.target.files[0])
+                        }}/>
+                        <Button onClick={handleSubmit}>ENCRYPT</Button>
+                    </Flex>
                 </Dialog.Content>
             </Dialog.Root>
 
@@ -211,7 +206,7 @@ export default function UploadFile(
 
                     <Flex direction="column" gap="3">
                         {isWarning ?
-                            <Card style={{background:'var(--gray-a6)'}}>
+                            <Card style={{background: 'var(--gray-a6)'}}>
                                 <Flex direction="column" gap="3">
                                     <Text>
                                         The Walrus system provides an interface that can be used for public testing. For

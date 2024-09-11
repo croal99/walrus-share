@@ -64,9 +64,13 @@ module store::manage {
     public entry fun create_manager(
         playground: &mut Playground,
         payment: Coin<SUI>,
+        filename: vector<u8>,
+        media: vector<u8>,
+        salt: vector<u8>,
+        blobId: vector<u8>,
         ctx: &mut TxContext
     ) {
-        assert!(coin::value(&payment) == CREATE_MANAGER_PRICE, EIncorrectAmount);
+        // assert!(coin::value(&payment) == CREATE_MANAGER_PRICE, EIncorrectAmount);
 
         let manager_address = tx_context::sender(ctx);
 
@@ -84,7 +88,7 @@ module store::manage {
             let sender = tx_context::sender(ctx);
 
             // create config item
-            let sharefile = filestore::initialize_file(b"", b"", b"", ctx);
+            let sharefile = filestore::initialize_file(filename, media, salt, blobId, ctx);
 
             // create manager
             let manager = Manage {

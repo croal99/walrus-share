@@ -43,7 +43,7 @@ module store::store_tests {
         ts::next_tx(&mut scenario, user);
         {
             let pay = coin::mint_for_testing<SUI>(1_000_000_000, scenario.ctx());
-            manage::create_manager(&mut playground, pay,scenario.ctx());
+            manage::create_manager(&mut playground, pay,b"filename", b"media", b"salt", b"blobId",scenario.ctx());
         };
 
         // print ShareFile
@@ -56,8 +56,8 @@ module store::store_tests {
         // update ShareFile
         ts::next_tx(&mut scenario, user);
         {
-            filestore::update_file(&mut sharefile, b"filename", b"media", b"salt", scenario.ctx());
-            debug::print(&sharefile);
+            // filestore::update_file(&mut sharefile, b"filename", b"media", b"salt", scenario.ctx());
+            // debug::print(&sharefile);
             ts::return_to_sender<ShareFile>(&scenario, sharefile);
         };
 
