@@ -18,6 +18,7 @@ module store::store_tests {
     fun test_playground() {
         let admin = @0xA;
         let user = @0xB;
+        let userC = @0xC;
         let mut scenario = ts::begin(admin);
         let mut playground: Playground;
         let mut sharefile: ShareFile;
@@ -62,6 +63,20 @@ module store::store_tests {
         ts::next_tx(&mut scenario, user);
         {
             sharefile = ts::take_from_sender<ShareFile>(&scenario);
+            debug::print(&sharefile);
+        };
+
+        // pay shareFile
+        ts::next_tx(&mut scenario, userC);
+        {
+            let pay = coin::mint_for_testing<SUI>(1_000_000, scenario.ctx());
+            manage::pay_share_view(
+                pay,
+                // &mut sharefile,
+                user,
+                scenario.ctx()
+            );
+
             debug::print(&sharefile);
         };
 

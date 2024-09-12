@@ -131,9 +131,6 @@ export default function Detail({walrusFile}) {
                         <Button disabled={isDownload} onClick={() => handleDownload(false)}>
                             <Spinner loading={isDownload}></Spinner> Download
                         </Button>
-                        <Dialog.Close>
-                            <Button>Close</Button>
-                        </Dialog.Close>
                     </Flex>
 
                 </Dialog.Content>

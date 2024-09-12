@@ -26,6 +26,7 @@
   width: 450px;
   /*background-color: white;*/
   background: var(--gray-a4);
+  /*background: color(display-p3 1 0.77 0.26);*/
 }
 
 .game-icon{

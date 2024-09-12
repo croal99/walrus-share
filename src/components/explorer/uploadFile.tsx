@@ -213,6 +213,7 @@ export default function UploadFile(
                             setFile(e.target.files[0])
                         }}/>
                         <Button onClick={handleSubmit}>ENCRYPT</Button>
+                        <Button variant="soft" onClick={()=>{setStep(0)}}>Cancel</Button>
                     </Flex>
                 </Dialog.Content>
             </Dialog.Root>

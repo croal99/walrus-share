@@ -55,8 +55,7 @@ export default function Explorer(
     const [currentFile, setCurrentFile] = useState<FileOnStore>({});
     const [shareDescritioin, setShareDescritioin] = useState('');
 
-    const {handleCreateManager} = useWalrusShare();
-    const SUI_COIN = 1_000_000_000;
+    const {SUI_COIN, handleCreateManager} = useWalrusShare();
 
     const paySUI = async () => {
         // return console.log('pay sui', currentFile)
@@ -267,7 +266,7 @@ export default function Explorer(
 
                     <Flex direction="column" gap="3">
                         <Text>
-                            You need to pay <Badge color="orange" size="3">1 SUI</Badge> coin to create a contract.
+                            You need to pay <Badge variant="solid" color="orange" size="3">1 SUI</Badge> coin to create a contract.
                         </Text>
                         <Text>
                             After you pay, you can share your files through the Walrus Share application.
@@ -280,7 +279,7 @@ export default function Explorer(
                         <Card>
                             <Grid columns="2" gap="3">
                                 <Flex gap="2" align="center">
-                                    <Radio name="shareType" value="0" defaultChecked
+                                    <Radio name="shareType" value="0" defaultChecked disabled={isLoading}
                                            onChange={event => {
                                                currentFile.share = parseInt(event.target.value);
                                                currentFile.code = '';
@@ -295,7 +294,7 @@ export default function Explorer(
                                 </Flex>
 
                                 <Flex gap="2" align="center">
-                                    <Radio name="shareType" value="1"
+                                    <Radio name="shareType" value="1" disabled={isLoading}
                                            onChange={event => {
                                                currentFile.share = parseInt(event.target.value);
                                                currentFile.code = Math.random().toString(36).substring(2, 6);
@@ -308,7 +307,7 @@ export default function Explorer(
                                 </Flex>
                                 <Flex>
                                     <TextField.Root
-                                        disabled={shareType != 0}
+                                        disabled={(shareType != 1) || isLoading}
                                         defaultValue={currentFile.code}
                                         onChange={event => {
                                             currentFile.code = event.target.value
@@ -317,7 +316,7 @@ export default function Explorer(
                                 </Flex>
 
                                 <Flex gap="2" align="center">
-                                    <Radio name="shareType" value="2"
+                                    <Radio name="shareType" value="2" disabled={isLoading}
                                            onChange={event => {
                                                currentFile.share = parseInt(event.target.value);
                                                currentFile.code = '';
@@ -331,7 +330,7 @@ export default function Explorer(
                                 </Flex>
                                 <Flex align="center" gap="2">
                                     <TextField.Root
-                                        disabled={shareType != 2}
+                                        disabled={(shareType != 2) || isLoading}
                                         defaultValue={shareFee}
                                         onChange={event => {
                                             currentFile.code = ''

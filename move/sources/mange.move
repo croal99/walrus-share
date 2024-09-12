@@ -123,7 +123,19 @@ module store::manage {
             // transfer::public_transfer(manager, manager_address);
             transfer::public_transfer(sharefile, manager_address);
         }
+    }
 
+    public entry fun pay_share_view(
+        payment: Coin<SUI>,
+        recipient: address,
+        ctx: &mut TxContext
+    ) {
+        // assert!(coin::value(&payment) == sharefile.fee(), EIncorrectAmount);
+
+        // let owner = *filestore::owner(sharefile);
+        transfer::public_transfer(payment, recipient);
+
+        // filestore::update_pay(sharefile, ctx);
     }
 
     #[allow(unused_function)]

@@ -7,6 +7,8 @@ export const useWalrusShare = () => {
     const account = useCurrentAccount();
     const {mutateAsync: signAndExecuteTransaction} = useSignAndExecuteTransaction();
 
+    const SUI_COIN = 1_000_000_000;
+
     // 配置信息
     const env = import.meta.env;
     const MARKET_PACKAGE_ID = env.VITE_MARKET_PACKAGE_ID;       // 合约
@@ -17,6 +19,7 @@ export const useWalrusShare = () => {
 
     const FULL_NODE = getFullnodeUrl(SUI_NETWORK);
     const suiClient = new SuiClient({url: FULL_NODE});
+    const waitForTransaction = suiClient.waitForTransaction;
 
     const handleCreateManager = async (filename, media, hash, salt, blobId, share, fee, code) => {
         const tb = new Transaction();
@@ -43,15 +46,13 @@ export const useWalrusShare = () => {
         const {digest} = await signAndExecuteTransaction({
             transaction: tb,
         });
+        // console.log('signAndExecuteTransaction', digest)
 
         const result = await suiClient.waitForTransaction({
             digest,
             timeout: 10_000,
             options: {
-                // showInput: true,
-                // showEvents: true,
                 showObjectChanges: true,
-                // showEffects: true,
             },
         });
         // console.log('waitForTransaction', result)
@@ -84,8 +85,34 @@ export const useWalrusShare = () => {
 
     }
 
+    const handlePayShareView = async (owner) => {
+        const tb = new Transaction();
+        tb.setSender(account?.address);
+        const payment = tb.splitCoins(tb.gas, [1_000_000]);
+
+        tb.moveCall({
+            target: `${MARKET_PACKAGE_ID}::manage::pay_share_view`,
+            arguments: [
+                payment,
+                tb.pure.address(owner),
+            ],
+        })
+
+        // 将PTB签名上链
+        const {digest} = await signAndExecuteTransaction({
+            transaction: tb,
+        });
+        // console.log('signAndExecuteTransaction', digest)
+
+        return digest;
+    }
+
     return {
+        account,
+        SUI_COIN,
         handleCreateManager,
         handleGetShareFileObject,
+        handlePayShareView,
+        waitForTransaction,
     }
 }

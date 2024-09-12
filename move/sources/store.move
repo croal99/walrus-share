@@ -17,6 +17,9 @@ module store::filestore {
         share: u64,         // 共享类型 0-free 1-code 2-sui
         fee: u64,
         code: String,
+        count: u64,
+        owner: address,
+        share_list: vector<address>,                    // file列表
     }
 
     public fun initialize_file(
@@ -40,6 +43,9 @@ module store::filestore {
             share,
             fee,
             code: string::utf8(code),
+            count: 0,
+            owner: tx_context::sender(ctx),
+            share_list: vector<address>[],
         };
 
         file
@@ -57,5 +63,20 @@ module store::filestore {
         sharefile.salt = string::utf8(salt);
     }
 
+    public fun update_pay(
+        sharefile: &mut ShareFile,
+        ctx: &mut TxContext
+    ) {
+        sharefile.count = sharefile.count + 1;
+        sharefile.share_list.push_back(tx_context::sender(ctx));
+    }
+
+    public fun owner(sharefile: &ShareFile): &address {
+        &sharefile.owner
+    }
+
+    public fun fee(sharefile: &ShareFile): u64 {
+        sharefile.fee
+    }
 
 }

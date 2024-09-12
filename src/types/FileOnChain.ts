@@ -10,4 +10,5 @@ export interface FileOnChain {
   share: number;
   fee: number;
   code: string;
+  owner: string;
 }
