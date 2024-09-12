@@ -1,15 +1,15 @@
-import {Link, Outlet, redirect, useLoaderData, useRouteLoaderData} from "react-router-dom";
+import {Link, Outlet, redirect, useLoaderData, useLocation, useRouteLoaderData} from "react-router-dom";
 import {Box, Button, Container, Flex, Grid, Heading, Text, TextField} from "@radix-ui/themes";
 import {HomeIcon, MagnifyingGlassIcon} from "@radix-ui/react-icons";
 import {apiAuthProvider} from "@/hooks/useAuthStatus.ts";
 import {getSetting} from "@/hooks/useLocalStore.ts";
 import {ConnectButton, useCurrentAccount} from "@mysten/dapp-kit";
 import SignIn from "@/components/user/signin.tsx";
+import {useEffect} from "react";
 
 import "@mysten/dapp-kit/dist/index.css";
 import "@radix-ui/themes/styles.css";
 import "@/styles/globals.css";
-import {useEffect} from "react";
 
 export default function Layout() {
     const account = useCurrentAccount();

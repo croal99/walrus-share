@@ -44,18 +44,6 @@ export async function getChildFiles(parentId) {
     return [];
 }
 
-export async function getFileByID(id) {
-    const files = await getAllFiles();
-
-    for (let i = 0; i < files.length; i++) {
-        if (files[i].id === id ) {
-            return files[i];
-        }
-    }
-
-    return false;
-}
-
 export async function getFilesByType(mediaType) {
     const files: FileOnStore[] | null = await localforage.getItem(KEY_FILE);
     if (!files) {
@@ -66,9 +54,6 @@ export async function getFilesByType(mediaType) {
         return [];
     }
 
-    // files.forEach((item)=>{
-    //     console.log(item.mediaType)
-    // });
     const list = matchSorter(files, mediaType, {keys: ["mediaType"]});
     for (const index in list) {
         list[index].icon = "default.png";
@@ -84,11 +69,37 @@ export async function getFilesByType(mediaType) {
     return list;
 }
 
+export async function getFileByID(id) {
+    const files = await getAllFiles();
+
+    for (let i = 0; i < files.length; i++) {
+        if (files[i].id === id ) {
+            return files[i];
+        }
+    }
+
+    return false;
+}
+
+export async function getFileByBlobID(blobId) {
+    const files = await getAllFiles();
+
+    for (let i = 0; i < files.length; i++) {
+        if (files[i].blobId === blobId ) {
+            return files[i];
+        }
+    }
+
+    return false;
+}
+
 export async function checkFileIsExist(newFile: FileOnStore) {
     const folders = await getChildFiles(newFile.parentId);
 
     // 检查是否已经创建
-    return matchSorter(folders, newFile.objectId, {keys: ["objectId"]}).length > 0
+    const match = matchSorter(folders, newFile.blobId, {keys: ["blobId"]});
+    // console.log('checkFileIsExist', match, newFile);
+    return match.length > 0
 }
 
 export async function createFile(newFile: FileOnStore) {
@@ -125,6 +136,21 @@ export async function removeFileStore(fileInfo: FileOnStore) {
     for (let i = 0; i < files.length; i++) {
         if (files[i].id === fileInfo.id ) {
             files.splice(i, 1);
+            break;
+        }
+    }
+    await setFiles(files);
+
+    return files
+}
+
+export async function updateFileStore(fileInfo: FileOnStore) {
+    const files = await getAllFiles();
+
+    for (let i = 0; i < files.length; i++) {
+        if (files[i].id === fileInfo.id ) {
+            // files.splice(i, 1);
+            files[i] = fileInfo
             break;
         }
     }

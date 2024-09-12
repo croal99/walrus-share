@@ -3,7 +3,7 @@ import {Box, Button, Card, Flex, Text, Dialog, TextField, Table, Inset, Strong, 
 import {
     createFile,
     getChildFiles,
-    removeFileStore
+    removeFileStore, updateFileStore
 } from "@/hooks/useFileStore.ts";
 import {
     checkFolderIsExist,
@@ -22,6 +22,8 @@ import Detail from "@/components/explorer/detail.tsx";
 import {humanFileSize} from "@/utils/formatSize.ts";
 import {getSetting} from "@/hooks/useLocalStore.ts";
 import {useWalrusShare} from "@/hooks/useWalrusShare.ts";
+import copy from "copy-to-clipboard";
+
 
 export default function Explorer(
     {
@@ -29,7 +31,7 @@ export default function Explorer(
         files,
         removeFolder,
         removeFile,
-        setUploadStep,
+        reFetch,
     }) {
     const [fileList, setFileList] = useState<FileOnStore[]>([]);
     const [folderList, setFolderList] = useState<FolderOnStore[]>([]);
@@ -44,30 +46,11 @@ export default function Explorer(
         setIsLoading(true);
 
         try {
-            const objectId = await handleCreateManager(currentFile.name, currentFile.mediaType, currentFile.salt, currentFile.blobId)
+            const objectId = await handleCreateManager(currentFile.name, currentFile.mediaType, currentFile.password, currentFile.blobId)
             console.log('create manager', objectId);
-            // if (typeof objectId == "string") {
-            //     const setting = await getSetting();
-            //     const salt = Math.random().toString(36).substring(2, 10);
-            //     const password = CryptoJS.SHA1(setting.walrusHash + salt).toString();
-            //
-            //     // const fileInfo: FileOnStore = {
-            //     //     id: "",
-            //     //     name: "",
-            //     //     parentId: root.id,
-            //     //     objectId,
-            //     //     blobId: "",
-            //     //     mediaType: "",
-            //     //     icon: "",
-            //     //     size: 0,
-            //     //     createAt: 0,
-            //     //     password,
-            //     //     salt,
-            //     // }
-            //
-            //     console.log('create file', fileInfo)
-            //     await createFile(fileInfo);
-            // }
+            currentFile.objectId = objectId;
+            await updateFileStore(currentFile);
+            reFetch();
 
             setStep(2)
         } catch (e) {
@@ -102,7 +85,7 @@ export default function Explorer(
 
                         <Table.Body>
                             {folderList.map((item, index) => (
-                                <Table.Row key={index}>
+                                <Table.Row key={index} align="center">
                                     <Table.RowHeaderCell>
                                         <Flex align="center">
                                             <img src='@images/folder.png' alt="" style={{height: '32px'}}/>
@@ -168,7 +151,7 @@ export default function Explorer(
                                         <Flex gap="3">
                                             <Dialog.Root>
                                                 <Dialog.Trigger>
-                                                    <Button color="red">Delete</Button>
+                                                    <Button color="red" style={{width: 75}}>Delete</Button>
                                                 </Dialog.Trigger>
 
                                                 <Dialog.Content maxWidth="450px">
@@ -207,10 +190,15 @@ export default function Explorer(
                                             />
 
                                             {item.objectId == "" ?
-                                                <Button color="green" onClick={() => {
+                                                <Button color="blue" style={{width: 75}} onClick={() => {
                                                     setCurrentFile(item)
                                                     setStep(1)
-                                                }}>Share</Button> : <></>}
+                                                }}>Protect</Button> :
+                                                <Button color="green" style={{width: 75}} onClick={() => {
+                                                    setCurrentFile(item)
+                                                    setStep(2)
+                                                }}>Link</Button>}
+
                                         </Flex>
 
 
@@ -226,7 +214,7 @@ export default function Explorer(
 
             <Dialog.Root open={step == 1}>
                 <Dialog.Content maxWidth="450px">
-                    <Dialog.Title>Create a Walrus-Share Contract</Dialog.Title>
+                    <Dialog.Title>Protect file with Walrus-Share Contract</Dialog.Title>
                     <Dialog.Description>
                     </Dialog.Description>
 
@@ -245,10 +233,44 @@ export default function Explorer(
                                 <Spinner loading></Spinner> Waiting SUI NET response.
                             </Button> :
                             <Flex gap="3" mt="4" justify="end">
-                                <Button onClick={()=>{setStep(0)}}>Close</Button>
-                                <Button onClick={()=>paySUI()} color="red" style={{width:70}}>Pay</Button>
+                                <Button onClick={() => {
+                                    setStep(0)
+                                }}>Close</Button>
+                                <Button onClick={() => paySUI()} color="red" style={{width: 70}}>Pay</Button>
                             </Flex>
                         }
+                    </Flex>
+
+                </Dialog.Content>
+            </Dialog.Root>
+
+            <Dialog.Root open={step == 2}>
+                <Dialog.Content maxWidth="550px">
+                    <Dialog.Title>Share file "{currentFile.name}"</Dialog.Title>
+                    <Dialog.Description>
+                    </Dialog.Description>
+
+                    <Flex direction="column" gap="3">
+                        <Flex align="center" gap="3">
+
+                        </Flex>
+                        <Text>
+                            Share URL
+                        </Text>
+                        <TextField.Root style={{width: "100%"}}
+                                        defaultValue={`${window.location.href}view/${currentFile.objectId}`}
+                        />
+                        <Text>
+                            When users download your shared files, you will receive the SUI coin paid by the user.
+                        </Text>
+                        <Flex gap="3" mt="4" justify="end">
+                            <Button onClick={() => {
+                                setStep(0)
+                            }}>Close</Button>
+                            <Button onClick={() => {
+                                copy(`${window.location.href}view/${currentFile.objectId}`)
+                            }} color="red">Copy link</Button>
+                        </Flex>
                     </Flex>
 
                 </Dialog.Content>

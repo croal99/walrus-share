@@ -13,6 +13,8 @@ module store::filestore {
         media: String,
         blobId: String,
         salt: String,
+        fee: u64,
+        code: String,
     }
 
     public fun initialize_file(
@@ -20,6 +22,8 @@ module store::filestore {
         media: vector<u8>,
         salt: vector<u8>,
         blobId: vector<u8>,
+        fee: u64,
+        code: vector<u8>,
         ctx: &mut TxContext
     ): ShareFile {
         let file = ShareFile {
@@ -28,6 +32,8 @@ module store::filestore {
             media: string::utf8(media),
             blobId: string::utf8(blobId),
             salt: string::utf8(salt),
+            fee,
+            code: string::utf8(code),
         };
 
         file

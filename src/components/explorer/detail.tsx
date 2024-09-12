@@ -106,7 +106,7 @@ export default function Detail({walrusFile}) {
         <>
             <Dialog.Root>
                 <Dialog.Trigger>
-                    <Button>Detail</Button>
+                    <Button style={{width:75}}>Detail</Button>
                 </Dialog.Trigger>
 
                 <Dialog.Content maxWidth="600px">

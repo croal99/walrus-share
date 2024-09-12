@@ -24,7 +24,7 @@ export default function SignIn() {
                             </Text>
                         </Flex>
                     </Card>
-                    <ConnectButton/>
+                    <ConnectButton className="login-form-button"/>
                 </Flex>
             </Box>
         </>

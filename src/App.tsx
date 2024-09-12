@@ -79,7 +79,7 @@ export default function App() {
                     files={fileList}
                     removeFolder={removeFolder}
                     removeFile={removeFile}
-                    setUploadStep={setUploadStep}
+                    reFetch={fetchData}
                 />
             </Flex>
         </>

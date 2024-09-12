@@ -39,7 +39,6 @@ module store::manage {
         config_id: ID,                                  // config object id
     }
 
-
     // 创建playground对象，保存可以使用的管理者
     public entry fun create_playground(
         name: vector<u8>,
@@ -68,6 +67,8 @@ module store::manage {
         media: vector<u8>,
         salt: vector<u8>,
         blobId: vector<u8>,
+        fee: u64,
+        code: vector<u8>,
         ctx: &mut TxContext
     ) {
         // assert!(coin::value(&payment) == CREATE_MANAGER_PRICE, EIncorrectAmount);
@@ -82,13 +83,21 @@ module store::manage {
             transfer::public_transfer(payment, manager_address);
         } else {
             debug::print(&string::utf8(b"create manager"));
+
             // 支付给创建者
             transfer::public_transfer(payment, playground.owner);
 
             let sender = tx_context::sender(ctx);
 
             // create config item
-            let sharefile = filestore::initialize_file(filename, media, salt, blobId, ctx);
+            let sharefile = filestore::initialize_file(
+                filename,
+                media,
+                salt,
+                blobId,
+                fee,
+                code,
+                ctx);
 
             // create manager
             let manager = Manage {

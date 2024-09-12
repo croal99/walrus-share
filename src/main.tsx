@@ -1,4 +1,3 @@
-
 import {createNetworkConfig, SuiClientProvider, WalletProvider} from '@mysten/dapp-kit';
 import {getFullnodeUrl} from '@mysten/sui/client';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
@@ -10,6 +9,7 @@ import {useCurrentAccount} from "@mysten/dapp-kit";
 import {createBrowserRouter, Link, Outlet, RouterProvider} from "react-router-dom";
 import Layout from "@/layout/layout.tsx";
 import App from "@/App.tsx";
+import View, {loader as viewLoader} from "@/components/view/view.tsx";
 
 // Config options for the networks you want to connect to
 const {networkConfig} = createNetworkConfig({
@@ -27,15 +27,15 @@ const router = createBrowserRouter([
 
             children: [
                 {
-                    // path: "home",
                     index: true,
                     Component: App,
                 },
-                {
-                    path: "home",
-                    Component: Home,
-                },
             ],
+        },
+        {
+            path: "/view/:id",
+            Component: View,
+            loader: viewLoader,
         },
     ]
 );
@@ -55,7 +55,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <QueryClientProvider client={queryClient}>
             <SuiClientProvider networks={networkConfig} defaultNetwork="testnet">
                 <WalletProvider>
-                    <RouterProvider router={router} />
+                    <RouterProvider router={router}/>
                 </WalletProvider>
             </SuiClientProvider>
         </QueryClientProvider>

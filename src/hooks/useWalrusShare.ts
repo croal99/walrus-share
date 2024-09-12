@@ -1,6 +1,7 @@
 import {useCurrentAccount, useSignAndExecuteTransaction} from "@mysten/dapp-kit";
 import {Transaction} from "@mysten/sui/transactions";
 import {SuiClient} from "@mysten/sui/client"
+import {FileOnChain} from "@/types/FileOnChain.ts";
 
 export const useWalrusShare = () => {
     const account = useCurrentAccount();
@@ -14,12 +15,11 @@ export const useWalrusShare = () => {
     const MARKET_PACKAGE_ID = env.VITE_MARKET_PACKAGE_ID;       // 合约
     const PLAYGROUND_ID = env.VITE_PLAYGROUND_ID;
     const FULL_NODE = env.VITE_PUBLIC_SUI_NETWORK;
-    console.log(env)
+    // console.log(env)
 
     const suiClient = new SuiClient({url: FULL_NODE});
 
     const handleCreateManager = async (filename, media, salt, blobId) => {
-        console.log('handleCreateManager', filename, media, salt, blobId)
         const tb = new Transaction();
         tb.setSender(account?.address);
         const payment = tb.splitCoins(tb.gas, [1_000_000]);
@@ -67,7 +67,22 @@ export const useWalrusShare = () => {
         return fileObjectID;
     }
 
+    const handleGetShareFileObject = async (id) => {
+        const res = await suiClient.getObject({
+            id,
+            options: {
+                showContent: true,
+            }
+        })
+
+        // console.log('shareFile object', res.data.content.fields);
+
+        return res.data.content.fields as FileOnChain;
+
+    }
+
     return {
         handleCreateManager,
+        handleGetShareFileObject,
     }
 }

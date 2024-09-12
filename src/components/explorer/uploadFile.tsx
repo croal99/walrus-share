@@ -52,40 +52,56 @@ export default function UploadFile(
         const passphrasebytes = new TextEncoder("utf-8").encode(setting.walrusHash);
         const pbkdf2salt = new TextEncoder("utf-8").encode(setting.walrusSalt);
 
-        const passphrasekey = await window.crypto.subtle.importKey('raw', passphrasebytes, {name: 'PBKDF2'}, false, ['deriveBits'])
-            .catch(function (err) {
-                console.error(err);
-            });
+        const passphrasekey = await window.crypto.subtle.importKey(
+            'raw',
+            passphrasebytes,
+            {name: 'PBKDF2'},
+            false,
+            ['deriveBits']
+        ).catch(function (err) {
+            console.error(err);
+        });
 
-        let pbkdf2bytes = await window.crypto.subtle.deriveBits({
-            "name": 'PBKDF2',
-            "salt": pbkdf2salt,
-            "iterations": pbkdf2iterations,
-            "hash": 'SHA-256'
-        }, passphrasekey as CryptoKey, 384)
-            .catch(function (err) {
-                console.error(err);
-            });
+        let pbkdf2bytes = await window.crypto.subtle.deriveBits(
+            {
+                "name": 'PBKDF2',
+                "salt": pbkdf2salt,
+                "iterations": pbkdf2iterations,
+                "hash": 'SHA-256'
+            },
+            passphrasekey as CryptoKey,
+            384
+        ).catch(function (err) {
+            console.error(err);
+        });
         pbkdf2bytes = new Uint8Array(pbkdf2bytes);
 
         let keybytes = pbkdf2bytes.slice(0, 32);
         let ivbytes = pbkdf2bytes.slice(32);
 
-        const key = await window.crypto.subtle.importKey('raw', keybytes, {
-            name: 'AES-CBC',
-            length: 256
-        }, false, ['encrypt'])
-            .catch(function (err) {
-                console.error(err);
-            });
+        const key = await window.crypto.subtle.importKey(
+            'raw',
+            keybytes,
+            {
+                name: 'AES-CBC',
+                length: 256
+            },
+            false,
+            ['encrypt']
+        ).catch(function (err) {
+            console.error(err);
+        });
 
-        var cipherbytes = await window.crypto.subtle.encrypt({
-            name: "AES-CBC",
-            iv: ivbytes
-        }, key as CryptoKey, plaintextbytes)
-            .catch(function (err) {
-                console.error(err);
-            });
+        let cipherbytes = await window.crypto.subtle.encrypt(
+            {
+                name: "AES-CBC",
+                iv: ivbytes
+            },
+            key as CryptoKey,
+            plaintextbytes
+        ).catch(function (err) {
+            console.error(err);
+        });
 
         cipherbytes = new Uint8Array(cipherbytes);
 

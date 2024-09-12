@@ -23,6 +23,7 @@
     "@tanstack/react-query": "^5.50.1",
     "@types/node": "^22.5.0",
     "axios": "^1.7.7",
+    "copy-to-clipboard": "^3.3.3",
     "crypto-js": "^4.2.0",
     "dayjs": "^1.11.13",
     "localforage": "^1.10.0",
