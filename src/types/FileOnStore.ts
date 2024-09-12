@@ -9,5 +9,8 @@ export interface FileOnStore {
     parentId: string;
     password: string;
     salt: string;
+    share: number;
+    fee: number;
+    code: string;
     createAt: number;
 }

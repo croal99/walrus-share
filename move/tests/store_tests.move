@@ -48,11 +48,14 @@ module store::store_tests {
                 pay,
                 b"filename",
                 b"media",
+                b"hash",
                 b"salt",
                 b"blobId",
+                1,
                 1_000_000_000,
                 b"code",
-                scenario.ctx());
+                scenario.ctx()
+            );
         };
 
         // print ShareFile

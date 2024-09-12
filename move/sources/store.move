@@ -11,8 +11,10 @@ module store::filestore {
         id: UID,
         filename: String,
         media: String,
-        blobId: String,
-        salt: String,
+        hash: String,       // password 1
+        salt: String,       // password 2
+        blobId: String,     // walrus blobId
+        share: u64,         // 共享类型 0-free 1-code 2-sui
         fee: u64,
         code: String,
     }
@@ -20,8 +22,10 @@ module store::filestore {
     public fun initialize_file(
         filename: vector<u8>,
         media: vector<u8>,
+        hash: vector<u8>,
         salt: vector<u8>,
         blobId: vector<u8>,
+        share: u64,
         fee: u64,
         code: vector<u8>,
         ctx: &mut TxContext
@@ -31,7 +35,9 @@ module store::filestore {
             filename: string::utf8(filename),
             media: string::utf8(media),
             blobId: string::utf8(blobId),
+            hash: string::utf8(hash),
             salt: string::utf8(salt),
+            share,
             fee,
             code: string::utf8(code),
         };

@@ -1,5 +1,19 @@
 import React, {useEffect, useState} from "react";
-import {Box, Button, Card, Flex, Text, Dialog, TextField, Table, Inset, Strong, Spinner} from "@radix-ui/themes";
+import {
+    Box,
+    Button,
+    Card,
+    Flex,
+    Text,
+    Dialog,
+    TextField,
+    Table,
+    Inset,
+    Strong,
+    Spinner,
+    Select,
+    Grid, Radio, Badge, Code
+} from "@radix-ui/themes";
 import {
     createFile,
     getChildFiles,
@@ -13,7 +27,7 @@ import {
     removeFolderStore
 } from "@/hooks/useFolderStore.ts";
 import dayjs from "dayjs";
-import CryptoJS from "crypto-js"
+import copy from "copy-to-clipboard";
 
 import type {FolderOnStore} from "@/types/FolderOnStore.ts";
 import type {FileOnStore} from "@/types/FileOnStore.ts";
@@ -22,7 +36,6 @@ import Detail from "@/components/explorer/detail.tsx";
 import {humanFileSize} from "@/utils/formatSize.ts";
 import {getSetting} from "@/hooks/useLocalStore.ts";
 import {useWalrusShare} from "@/hooks/useWalrusShare.ts";
-import copy from "copy-to-clipboard";
 
 
 export default function Explorer(
@@ -37,26 +50,57 @@ export default function Explorer(
     const [folderList, setFolderList] = useState<FolderOnStore[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [step, setStep] = useState(0);
+    const [shareType, setShareType] = useState(0);
+    const [shareFee, setShareFee] = useState("");
     const [currentFile, setCurrentFile] = useState<FileOnStore>({});
+    const [shareDescritioin, setShareDescritioin] = useState('');
 
     const {handleCreateManager} = useWalrusShare();
+    const SUI_COIN = 1_000_000_000;
 
     const paySUI = async () => {
-        console.log('pay sui', currentFile)
+        // return console.log('pay sui', currentFile)
         setIsLoading(true);
 
         try {
-            const objectId = await handleCreateManager(currentFile.name, currentFile.mediaType, currentFile.password, currentFile.blobId)
-            console.log('create manager', objectId);
+            const objectId = await handleCreateManager(
+                currentFile.name,
+                currentFile.mediaType,
+                currentFile.password,
+                currentFile.salt,
+                currentFile.blobId,
+                currentFile.share,
+                currentFile.fee,
+                currentFile.code,
+            )
+            // console.log('create manager', objectId);
             currentFile.objectId = objectId;
             await updateFileStore(currentFile);
             reFetch();
 
-            setStep(2)
+            showShareLink(currentFile)
         } catch (e) {
             alert(e)
         }
         setIsLoading(false)
+    }
+
+    const showShareLink = (fileInfo: FileOnStore) => {
+        // console.log('share', fileInfo)
+
+        switch (fileInfo.share) {
+            case 0:
+                setShareDescritioin("It's Free. Anyone can view the files you share.");
+                break;
+            case 1:
+                setShareDescritioin("Users use the sharing code to view the files you share.");
+                break;
+            case 2:
+                setShareDescritioin("Users need to pay SUI coin to view the files you share.");
+                break;
+        }
+        setCurrentFile(fileInfo)
+        setStep(2)
     }
 
     useEffect(() => {
@@ -190,14 +234,17 @@ export default function Explorer(
                                             />
 
                                             {item.objectId == "" ?
-                                                <Button color="blue" style={{width: 75}} onClick={() => {
-                                                    setCurrentFile(item)
-                                                    setStep(1)
-                                                }}>Protect</Button> :
-                                                <Button color="green" style={{width: 75}} onClick={() => {
-                                                    setCurrentFile(item)
-                                                    setStep(2)
-                                                }}>Link</Button>}
+                                                <Button color="blue" style={{width: 75}}
+                                                        onClick={() => {
+                                                            // 因为是初始化文件，所以所有file的share=0
+                                                            setCurrentFile(item);
+                                                            setShareType(0);
+                                                            setStep(1);
+                                                        }}>Protect
+                                                </Button> :
+                                                <Button color="green" style={{width: 75}}
+                                                        onClick={() => showShareLink(item)}>Link
+                                                </Button>}
 
                                         </Flex>
 
@@ -213,21 +260,90 @@ export default function Explorer(
             </Flex>
 
             <Dialog.Root open={step == 1}>
-                <Dialog.Content maxWidth="450px">
+                <Dialog.Content maxWidth="500px">
                     <Dialog.Title>Protect file with Walrus-Share Contract</Dialog.Title>
                     <Dialog.Description>
                     </Dialog.Description>
 
                     <Flex direction="column" gap="3">
                         <Text>
-                            You need to pay 1 SUI coin to create a contract.
+                            You need to pay <Badge color="orange" size="3">1 SUI</Badge> coin to create a contract.
                         </Text>
                         <Text>
                             After you pay, you can share your files through the Walrus Share application.
                         </Text>
                         <Text>
-                            When users download your shared files, you will receive the SUI coin paid by the user.
+                            When a user views the file you shared, the user will pay or unlock it according to the
+                            sharing method you set.
                         </Text>
+                        <Text size="4" weight="bold">Select share method</Text>
+                        <Card>
+                            <Grid columns="2" gap="3">
+                                <Flex gap="2" align="center">
+                                    <Radio name="shareType" value="0" defaultChecked
+                                           onChange={event => {
+                                               currentFile.share = parseInt(event.target.value);
+                                               currentFile.code = '';
+                                               currentFile.fee = 0;
+                                               setShareFee("");
+                                               setShareType(currentFile.share);
+                                               setCurrentFile(currentFile);
+                                           }}/>
+                                    <Text as="label" size="2">Free</Text>
+                                </Flex>
+                                <Flex>
+                                </Flex>
+
+                                <Flex gap="2" align="center">
+                                    <Radio name="shareType" value="1"
+                                           onChange={event => {
+                                               currentFile.share = parseInt(event.target.value);
+                                               currentFile.code = Math.random().toString(36).substring(2, 6);
+                                               currentFile.fee = 0;
+                                               setShareFee("");
+                                               setShareType(currentFile.share);
+                                               setCurrentFile(currentFile)
+                                           }}/>
+                                    <Text as="label" size="2">Code</Text>
+                                </Flex>
+                                <Flex>
+                                    <TextField.Root
+                                        disabled={shareType != 0}
+                                        defaultValue={currentFile.code}
+                                        onChange={event => {
+                                            currentFile.code = event.target.value
+                                        }}
+                                    />
+                                </Flex>
+
+                                <Flex gap="2" align="center">
+                                    <Radio name="shareType" value="2"
+                                           onChange={event => {
+                                               currentFile.share = parseInt(event.target.value);
+                                               currentFile.code = '';
+                                               currentFile.fee = 0.1 * SUI_COIN;
+                                               setShareFee("0.1");
+                                               setShareType(currentFile.share);
+                                               setCurrentFile(currentFile);
+                                           }}
+                                    />
+                                    <Text as="label" size="2">Pay</Text>
+                                </Flex>
+                                <Flex align="center" gap="2">
+                                    <TextField.Root
+                                        disabled={shareType != 2}
+                                        defaultValue={shareFee}
+                                        onChange={event => {
+                                            currentFile.code = ''
+                                            currentFile.fee = parseFloat(event.target.value) * SUI_COIN
+                                        }}
+                                    />SUI
+                                </Flex>
+                            </Grid>
+
+
+                        </Card>
+
                         {isLoading ?
                             <Button>
                                 <Spinner loading></Spinner> Waiting SUI NET response.
@@ -246,30 +362,39 @@ export default function Explorer(
 
             <Dialog.Root open={step == 2}>
                 <Dialog.Content maxWidth="550px">
-                    <Dialog.Title>Share file "{currentFile.name}"</Dialog.Title>
+                    <Dialog.Title>Share info of "{currentFile.name}"</Dialog.Title>
                     <Dialog.Description>
                     </Dialog.Description>
 
                     <Flex direction="column" gap="3">
-                        <Flex align="center" gap="3">
-
-                        </Flex>
-                        <Text>
-                            Share URL
-                        </Text>
-                        <TextField.Root style={{width: "100%"}}
-                                        defaultValue={`${window.location.href}view/${currentFile.objectId}`}
-                        />
-                        <Text>
-                            When users download your shared files, you will receive the SUI coin paid by the user.
-                        </Text>
-                        <Flex gap="3" mt="4" justify="end">
-                            <Button onClick={() => {
-                                setStep(0)
-                            }}>Close</Button>
-                            <Button onClick={() => {
-                                copy(`${window.location.href}view/${currentFile.objectId}`)
-                            }} color="red">Copy link</Button>
+                        <Flex gap="3"></Flex>
+                        <Text>Share URL</Text>
+                        <Card>
+                            {`${window.location.href}view/${currentFile.objectId}`}
+                        </Card>
+                        <Text>Share Type</Text>
+                        <Text>{shareDescritioin}</Text>
+                        {currentFile.share==1?
+                            <Flex align="center" gap="3">
+                                <Text>Share Code</Text>
+                                <Button>{currentFile.code}</Button>
+                            </Flex>:null
+                        }
+                        {currentFile.share==2?
+                            <Flex align="center" gap="3">
+                                <Text>Payment</Text>
+                                <Button>{(currentFile.fee / SUI_COIN).toString()}</Button>
+                                <Text>SUI</Text>
+                            </Flex>:null
+                        }
+                        <Flex gap="3"></Flex>
+                        <Flex direction="column">
+                            <Button
+                                onClick={() => {
+                                    copy(`${window.location.href}view/${currentFile.objectId}`)
+                                    setStep(0)
+                                }}
+                            >Copy link</Button>
                         </Flex>
                     </Flex>
 

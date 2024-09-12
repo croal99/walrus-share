@@ -1,25 +1,24 @@
 import {useCurrentAccount, useSignAndExecuteTransaction} from "@mysten/dapp-kit";
 import {Transaction} from "@mysten/sui/transactions";
-import {SuiClient} from "@mysten/sui/client"
+import {SuiClient, getFullnodeUrl} from "@mysten/sui/client"
 import {FileOnChain} from "@/types/FileOnChain.ts";
 
 export const useWalrusShare = () => {
     const account = useCurrentAccount();
-
-    // const {mutate: signAndExecuteTransaction} = useSignAndExecuteTransaction();
-    // const {mutate: signAndExecuteTransaction, mutateAsync: reportTransactionEffects} = useSignAndExecuteTransaction();
     const {mutateAsync: signAndExecuteTransaction} = useSignAndExecuteTransaction();
 
     // 配置信息
     const env = import.meta.env;
     const MARKET_PACKAGE_ID = env.VITE_MARKET_PACKAGE_ID;       // 合约
     const PLAYGROUND_ID = env.VITE_PLAYGROUND_ID;
-    const FULL_NODE = env.VITE_PUBLIC_SUI_NETWORK;
+    const SUI_NETWORK = env.VITE_PUBLIC_SUI_NETWORK;
+
     // console.log(env)
 
+    const FULL_NODE = getFullnodeUrl(SUI_NETWORK);
     const suiClient = new SuiClient({url: FULL_NODE});
 
-    const handleCreateManager = async (filename, media, salt, blobId) => {
+    const handleCreateManager = async (filename, media, hash, salt, blobId, share, fee, code) => {
         const tb = new Transaction();
         tb.setSender(account?.address);
         const payment = tb.splitCoins(tb.gas, [1_000_000]);
@@ -31,8 +30,12 @@ export const useWalrusShare = () => {
                 payment,
                 tb.pure.string(filename),
                 tb.pure.string(media),
+                tb.pure.string(hash),
                 tb.pure.string(salt),
                 tb.pure.string(blobId),
+                tb.pure.u64(share),
+                tb.pure.u64(fee),
+                tb.pure.string(code),
             ],
         })
 

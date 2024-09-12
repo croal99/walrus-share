@@ -123,7 +123,7 @@ export default function UploadFile(
             }
         };
         axios.put(publisherUrl, resultbytes, config).then(response => {
-            console.log('store', response)
+            // console.log('store', response)
             setUploadProgress(0);
             let blobId: string;
 
@@ -153,6 +153,9 @@ export default function UploadFile(
                 createAt: 0,
                 password: setting.walrusHash,
                 salt: setting.walrusSalt,
+                share: 0,
+                fee: 0,
+                code: '',
             }
 
             // console.log('new file', fileInfo);
@@ -244,7 +247,7 @@ export default function UploadFile(
                                 </Flex>
                             </Card> : null}
                         {uploadProgress < 100 ?
-                            <Progress value={uploadProgress} size="3"></Progress> :
+                            <Progress value={uploadProgress} style={{height:'32px'}}></Progress> :
                             <Button>
                                 <Spinner loading></Spinner> Waiting Walrus response.
                             </Button>}

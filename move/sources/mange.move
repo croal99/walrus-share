@@ -65,8 +65,10 @@ module store::manage {
         payment: Coin<SUI>,
         filename: vector<u8>,
         media: vector<u8>,
+        hash: vector<u8>,
         salt: vector<u8>,
         blobId: vector<u8>,
+        share: u64,
         fee: u64,
         code: vector<u8>,
         ctx: &mut TxContext
@@ -93,11 +95,14 @@ module store::manage {
             let sharefile = filestore::initialize_file(
                 filename,
                 media,
+                hash,
                 salt,
                 blobId,
+                share,
                 fee,
                 code,
-                ctx);
+                ctx
+            );
 
             // create manager
             let manager = Manage {
