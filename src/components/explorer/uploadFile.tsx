@@ -130,7 +130,7 @@ export default function UploadFile(
             }
         };
         axios.put(publisherUrl, resultbytes, config).then(response => {
-            // console.log('store', response)
+            console.log('store', response)
             setUploadProgress(0);
             let blobId: string;
 

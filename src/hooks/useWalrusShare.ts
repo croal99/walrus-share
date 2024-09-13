@@ -7,7 +7,7 @@ export const useWalrusShare = () => {
     const account = useCurrentAccount();
     const {mutateAsync: signAndExecuteTransaction} = useSignAndExecuteTransaction();
 
-    const SUI_COIN = 1_000_000_000;
+    const SUI_COIN = 1_00_000_000;
 
     // 配置信息
     const env = import.meta.env;

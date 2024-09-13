@@ -24,7 +24,7 @@ export default function SignIn() {
                             </Text>
 
                             <Text size="1" mb="1" align={'center'}>
-                                Version (20240904.test)
+                                Version (20240913.test)
                             </Text>
                         </Flex>
                     </Card>

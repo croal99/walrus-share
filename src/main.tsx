@@ -5,7 +5,7 @@ import Home from "@/components/home/home.tsx";
 import ReactDOM from "react-dom/client";
 import {Box, Flex, Theme} from "@radix-ui/themes";
 import React from "react";
-import {createBrowserRouter, Link, Outlet, RouterProvider} from "react-router-dom";
+import {createHashRouter, createBrowserRouter, RouterProvider} from "react-router-dom";
 import Layout from "@/layout/layout.tsx";
 import App from "@/App.tsx";
 import View, {loader as viewLoader} from "@/components/view/view.tsx";
@@ -20,7 +20,7 @@ const {networkConfig} = createNetworkConfig({
 });
 const queryClient = new QueryClient();
 
-const router = createBrowserRouter([
+const router = createHashRouter([
         {
             id: "root",
             path: "/",
