@@ -37,6 +37,14 @@ export default function UploadFile(
         // event.preventDefault()
         const setting = await getSetting();
 
+        if (file.type.indexOf('image') == -1) {
+            toast.error('Walrus Share can only share image files', {
+                duration: 5000
+            });
+            setStep(0);
+            return
+        }
+
         setUploadProgress(0);
         setIsWarning(setting.publisher === "https://publisher-devnet.walrus.space");
 
