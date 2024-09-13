@@ -20,7 +20,7 @@ export default function PayView(
         setIsLoading(true)
 
         try {
-            const digest =  await handlePayShareView(shareFile.owner);
+            const digest =  await handlePayShareView(shareFile);
             setDigest(digest)
             setIsConfirm(true)
 

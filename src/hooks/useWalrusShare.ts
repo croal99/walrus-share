@@ -85,16 +85,16 @@ export const useWalrusShare = () => {
 
     }
 
-    const handlePayShareView = async (owner) => {
+    const handlePayShareView = async (shareFile:FileOnChain) => {
         const tb = new Transaction();
         tb.setSender(account?.address);
-        const payment = tb.splitCoins(tb.gas, [1_000_000]);
+        const payment = tb.splitCoins(tb.gas, [shareFile.fee]);
 
         tb.moveCall({
             target: `${MARKET_PACKAGE_ID}::manage::pay_share_view`,
             arguments: [
                 payment,
-                tb.pure.address(owner),
+                tb.pure.address(shareFile.owner),
             ],
         })
 
