@@ -45,6 +45,7 @@ export default function Explorer(
     const [step, setStep] = useState(0);
     const [shareType, setShareType] = useState(0);
     const [shareFee, setShareFee] = useState("");
+    const [shareURL, setShareURL] = useState("");
     const [currentFile, setCurrentFile] = useState<FileOnStore>({});
     const [shareDescritioin, setShareDescritioin] = useState('');
 
@@ -79,6 +80,8 @@ export default function Explorer(
 
     const showShareLink = (fileInfo: FileOnStore) => {
         // console.log('share', fileInfo)
+        let baseUrl = window.location.href.split('#')[0]
+        setShareURL(`${baseUrl}#/view/${fileInfo.objectId}`)
 
         switch (fileInfo.share) {
             case 0:
@@ -363,7 +366,7 @@ export default function Explorer(
                         <Flex gap="3"></Flex>
                         <Text>Share URL</Text>
                         <Card>
-                            {`${window.location.href}view/${currentFile.objectId}`}
+                            {shareURL}
                         </Card>
                         <Text>Share Type</Text>
                         <Text>{shareDescritioin}</Text>
@@ -384,7 +387,7 @@ export default function Explorer(
                         <Flex direction="column" gap="3">
                             <Button
                                 onClick={() => {
-                                    copy(`${window.location.href}view/${currentFile.objectId}`);
+                                    copy(shareURL);
                                     toast.success('Link copied');
                                     setStep(0)
                                 }}

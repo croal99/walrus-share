@@ -18,7 +18,7 @@ export async function loader({params}) {
 }
 
 export default function View() {
-    const [shareFile, setShareFile] = useState<FileOnChain | boolean>(false);
+    const [shareFile, setShareFile] = useState<FileOnChain>({share: 3});
 
     const {id} = useLoaderData();
     const {handleGetShareFileObject} = useWalrusShare();
@@ -26,7 +26,8 @@ export default function View() {
     const fetchData = async () => {
         // console.log('fetch data');
         const fileObject = await handleGetShareFileObject(id);
-        // console.log('share file', fileObject)
+        fileObject.share = parseInt(String(fileObject.share))
+        // console.log('share file', fileObject.share)
         setShareFile(fileObject);
     };
 
@@ -39,22 +40,37 @@ export default function View() {
         }
     }, []);
 
-    return (
-        <>
-            {shareFile.share == 0 ?
+    switch (shareFile.share) {
+        case 0:
+            return (
                 <PreViewImage
                     shareFile={shareFile}
-                /> : <>
-                    {shareFile.share == 1 ?
-                        <CodeView
-                            shareFile={shareFile}
-                        />
-                        : <PayView
-                            shareFile={shareFile}
-                        />
-                    }
-                </>
-            }
+                />
+            )
+
+        case 1:
+            return (
+                <CodeView
+                    shareFile={shareFile}
+                />
+            )
+
+        case 2:
+            return (
+                <PayView
+                    shareFile={shareFile}
+                />
+            )
+    }
+
+
+    return (
+        <>
+            <Flex className="preview-container" gap="4">
+                <Button>
+                    <Spinner loading></Spinner> Loading...
+                </Button>
+            </Flex>
         </>
     )
 }
