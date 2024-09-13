@@ -38,7 +38,7 @@ export default function PayView(
                         <Card className="preview-form">
                             <Flex direction="column" gap="3">
                                 <Text as="div" weight="bold" size="3" mb="1" align={'center'}>
-                                    Walrus Share
+                                    <img src="/images/logo.png" alt="" style={{height: '50px'}}/>
                                 </Text>
                                 <Text>
                                     In order to support the author in sharing his wonderful works, please
