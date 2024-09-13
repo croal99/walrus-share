@@ -5,8 +5,8 @@ import {getSetting} from "@/hooks/useLocalStore.ts";
 import {BlobOnWalrus, NewBlobOnWalrus} from "@/types/BlobOnWalrus.ts";
 import {FileOnStore} from "@/types/FileOnStore.ts";
 import {createFile} from "@/hooks/useFileStore.ts";
-import * as Toast from '@radix-ui/react-toast';
 import axios from 'axios';
+import {toast, Toaster} from "react-hot-toast";
 
 import "@/styles/toast.css";
 
@@ -19,7 +19,6 @@ export default function UploadFile(
     const [file, setFile] = useState();
     const [step, setStep] = useState(0);
     const [uploadProgress, setUploadProgress] = useState(0);
-    const [openToast, setOpenToast] = React.useState(false);
     const [isError, setIsError] = React.useState(false);
     const [isWarning, setIsWarning] = React.useState(false);
     const [message, setMessage] = React.useState("");
@@ -129,10 +128,10 @@ export default function UploadFile(
 
             if (response.data.alreadyCertified) {
                 blobId = (response.data.alreadyCertified as BlobOnWalrus).blobId
-                setMessage("This file has already been uploaded")
+                toast.success("This file has already been uploaded")
             } else if (response.data.newlyCreated) {
                 blobId = (response.data.newlyCreated as NewBlobOnWalrus).blobObject.blobId
-                setMessage("Walrus file created successfully")
+                toast.success("Walrus file created successfully")
             } else {
                 setUploadProgress(0);
                 setStep(0);
@@ -162,8 +161,7 @@ export default function UploadFile(
             createFile(fileInfo).then(() => {
                 reFetchDir()
                 setStep(0);
-                setOpenToast(true)
-            })
+            });
         }).catch(error => {
             console.log('store error', error)
             setUploadProgress(0);
@@ -280,14 +278,6 @@ export default function UploadFile(
 
                 </Dialog.Content>
             </Dialog.Root>
-
-            <Toast.Provider swipeDirection="right">
-                <Toast.Root className="ToastRoot" open={openToast} onOpenChange={setOpenToast}>
-                    <Toast.Title className="ToastTitle">{message}</Toast.Title>
-                </Toast.Root>
-                <Toast.Viewport className="ToastViewport"/>
-            </Toast.Provider>
-
         </>
     )
 }

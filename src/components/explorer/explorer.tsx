@@ -19,22 +19,15 @@ import {
     getChildFiles,
     removeFileStore, updateFileStore
 } from "@/hooks/useFileStore.ts";
-import {
-    checkFolderIsExist,
-    createFolder,
-    getChildFolders,
-    getCurrentFolder, getFolderPWD,
-    removeFolderStore
-} from "@/hooks/useFolderStore.ts";
 import dayjs from "dayjs";
 import copy from "copy-to-clipboard";
+import {toast, Toaster} from "react-hot-toast";
 
 import type {FolderOnStore} from "@/types/FolderOnStore.ts";
 import type {FileOnStore} from "@/types/FileOnStore.ts";
 import Detail from "@/components/explorer/detail.tsx";
 
 import {humanFileSize} from "@/utils/formatSize.ts";
-import {getSetting} from "@/hooks/useLocalStore.ts";
 import {useWalrusShare} from "@/hooks/useWalrusShare.ts";
 
 
@@ -115,6 +108,7 @@ export default function Explorer(
     return (
         <>
             <Flex gap="3" direction="column">
+                <Toaster />
                 <Card style={{background: 'var(--gray-a6)'}}>
                     <Table.Root>
                         <Table.Header>
@@ -390,7 +384,8 @@ export default function Explorer(
                         <Flex direction="column">
                             <Button
                                 onClick={() => {
-                                    copy(`${window.location.href}view/${currentFile.objectId}`)
+                                    copy(`${window.location.href}view/${currentFile.objectId}`);
+                                    toast.success('Link copied');
                                     setStep(0)
                                 }}
                             >Copy link</Button>
