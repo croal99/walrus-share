@@ -125,7 +125,7 @@ export default function Explorer(
                                 <Table.Row key={index} align="center">
                                     <Table.RowHeaderCell>
                                         <Flex align="center">
-                                            <img src='@images/folder.png' alt="" style={{height: '32px'}}/>
+                                            <img src='/images/folder.png' alt="" style={{height: '32px'}}/>
                                         </Flex>
                                     </Table.RowHeaderCell>
                                     <Table.Cell>
@@ -174,7 +174,7 @@ export default function Explorer(
                             ))}
 
                             {fileList.map((item, index) => (
-                                <Table.Row key={index}>
+                                <Table.Row key={index} align="center">
                                     <Table.RowHeaderCell>
                                         <Flex align="center" gap="2">
                                             <img src={`/images/${item.icon}`} alt="" style={{height: '32px'}}/>
@@ -381,14 +381,23 @@ export default function Explorer(
                             </Flex>:null
                         }
                         <Flex gap="3"></Flex>
-                        <Flex direction="column">
+                        <Flex direction="column" gap="3">
                             <Button
                                 onClick={() => {
                                     copy(`${window.location.href}view/${currentFile.objectId}`);
                                     toast.success('Link copied');
                                     setStep(0)
                                 }}
-                            >Copy link</Button>
+                            >
+                                Copy link
+                            </Button>
+                            <Button variant="surface"
+                                onClick={() => {
+                                    setStep(0)
+                                }}
+                            >
+                                Close
+                            </Button>
                         </Flex>
                     </Flex>
 

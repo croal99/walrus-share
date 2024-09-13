@@ -132,7 +132,7 @@ export default function PreViewImage(
             <Flex direction="column" gap="4" p="4">
                 <Box>
                     <Grid columns="2" align="center">
-                        <Heading><Link to="/" style={{textDecoration: 'none'}}>Walrus Share</Link></Heading>
+                        <Heading><Link to="/" style={{textDecoration: 'none'}}><img src="/images/logo.png" alt="" style={{height:'50px'}}/></Link></Heading>
                         <Flex justify="end" className="header">
                         </Flex>
                     </Grid>

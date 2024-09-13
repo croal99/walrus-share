@@ -33,7 +33,7 @@ export default function Layout() {
             <Flex direction="column" gap="3" p="4">
                 <Box>
                     <Grid columns="2" align="center">
-                        <Heading>Walrus Share</Heading>
+                        <img src="/images/logo.png" alt="" style={{height:'50px'}}/>
                         <Flex justify="end" className="header">
                             <ConnectButton/>
                         </Flex>
