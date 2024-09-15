@@ -57,7 +57,7 @@ export default function PayView(
                                     </>
                                     : null}
                                 <Text size="1" align={'center'}>
-                                    Version (20240904.test)
+                                    Version (20240914.test)
                                 </Text>
 
                             </Flex>
