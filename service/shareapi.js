@@ -3,8 +3,8 @@ const AWS = require('aws-sdk');
 // 配置 AWS 区域和凭证
 AWS.config.update({
     region: 'us-east-1', // 替换为你的区域
-    accessKeyId: 'AKIA4SYAMJJC5Q2WBHPZ',
-    secretAccessKey: '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'
+    // accessKeyId: 'AKIA4SYAMJJC5Q2WBHPZ',
+    // secretAccessKey: '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'
 });
 
 const dynamodb = new AWS.DynamoDB();
