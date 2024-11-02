@@ -20,7 +20,7 @@ export default function Detail({walrusFile}) {
         setIsDownload(true);
         // await new Promise((r) => setTimeout(r, 500)); // fake delay
 
-        const txUrl = `${setting.aggregator}/v1/${walrusFile.blobId}`;
+        const txUrl = `https://aggregator.walrus-testnet.walrus.space/v1/${walrusFile.blobId}`;
         axios.get(txUrl, { responseType: 'arraybuffer' }).then(async (res) => {
             let cipherbytes = new Uint8Array(res.data);
 

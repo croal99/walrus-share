@@ -119,7 +119,7 @@ export default function UploadFile(
 
         // 准备上传
         setStep(2);
-        const publisherUrl = `${setting.publisher}/v1/store?epochs=1`;
+        const publisherUrl = `https://publisher.walrus-testnet.walrus.space/v1/store?epochs=1`;
         const config = {
             headers: {
                 'content-type': 'multipart/form-data',
